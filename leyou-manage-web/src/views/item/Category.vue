@@ -2,6 +2,7 @@
   <v-card>
     <v-flex xs12 sm10>
       <v-tree url="/item/category/of/parent" isEdit @handAdd="handleAdd"></v-tree>
+      <!--url="/item/category/of/parent"-->
     </v-flex>
   </v-card>
 </template>
@@ -11,7 +12,8 @@
     name: "category",
     data() {
       return {
-        isEdit: true
+        isEdit: true,
+          treeData: []
       }
     },
     methods: {

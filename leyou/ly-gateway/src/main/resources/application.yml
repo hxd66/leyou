@@ -25,3 +25,21 @@ zuul:
   prefix: /api   #添加路由前缀
   routes:
     item-service: /item/**    #将商品为服务映射到/item/**
+ly:
+  cors:
+    allowedOrigins:
+    - http://www.leyou.com
+    - http://manage.leyou.com
+    allowedCredentials: true
+    allowedHeaders:
+    - "*"
+    allowedMethods:
+    - GET
+    - POST
+    - DELETE
+    - PUT
+    - OPTIONS
+    - HEAD
+    maxAge: 360000
+    filterPath: "/**"
+
