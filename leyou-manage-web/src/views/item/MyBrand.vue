@@ -65,7 +65,7 @@
       <template v-slot:items="props">
         <td class="text-xs-center">{{ props.item.id }}</td>
         <td class="text-xs-center">{{ props.item.name }}</td>
-        <td class="text-xs-center">{{ props.item.image }}</td>
+        <td class="text-xs-center"><img :src="props.item.image"/></td>
         <td class="text-xs-center">{{ props.item.letter }}</td>
         <td class="justify-center layout px-0">
           <v-icon
@@ -82,8 +82,8 @@
             delete
           </v-icon>
         </td>
-      <!--</template>
-      <template v-slot:no-data>
+     </template>
+       <!--<template v-slot:no-data>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>-->
     </v-data-table>
@@ -146,7 +146,7 @@
                     this.getDataFromServer();
                 }
             },
-            serch: {  //监视搜索字段
+            search: {  //监视搜索字段
                 handler(){
                     this.getDataFromServer();
                 }
