@@ -24,7 +24,7 @@ ribbon:
 zuul:
   prefix: /api   #添加路由前缀
   routes:
-    item-service: /item/**    #将商品为服务映射到/item/**
+    item-service: /item/**    #将商品微服务映射到/item/**
     upload-service: /upload/**
 ly:
   cors:
