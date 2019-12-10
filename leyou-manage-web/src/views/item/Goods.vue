@@ -141,6 +141,9 @@
       },
       saleable(){
         this.getDataFromServer();
+      },
+      search(){
+        this.getDataFromServer();
       }
     },
     methods: {

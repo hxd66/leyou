@@ -40,7 +40,23 @@ public class BrandController {
     @PostMapping
     public ResponseEntity<Void> saveBrand(BrandDTO brandDTO,
                                           @RequestParam("cids")List<Long> ids){
+        System.err.println(brandDTO);
         brandService.saveBrand(brandDTO,ids);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateBrand(BrandDTO brandDTO,@RequestParam("cids")List<Long> ids){
+        brandService.updateBrand(brandDTO,ids);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * http://api.leyou.com/api/item/brand/?id=1115
+     */
+    @DeleteMapping
+    public ResponseEntity<Void> deleteByBrandId(@RequestParam("id") Long id){
+        brandService.deleteByBrandId(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

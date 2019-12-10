@@ -128,6 +128,19 @@
             this.oldBrand.categories = data;
           })
       },
+      deleteBrand(oldBrand){
+          var flat = confirm('Are you sure you want to delete this brand?');
+          if (flat) {
+              this.$http.delete("/item/brand/?id=" + oldBrand.id)
+                  .then(resp => {
+                      this.getDataFromServer();
+                      this.$message.success("操作成功！");
+                  })
+                  .catch(error => {
+                      this.$message.error("操作失败，请重试！");
+                  })
+          }
+      },
       closeWindow(){
         // 重新加载数据
         this.getDataFromServer();

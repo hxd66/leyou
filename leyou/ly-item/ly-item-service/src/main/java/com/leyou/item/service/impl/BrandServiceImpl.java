@@ -3,6 +3,7 @@ package com.leyou.item.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
@@ -12,14 +13,19 @@ import com.leyou.item.entity.Brand;
 import com.leyou.item.mapper.BrandMapper;
 import com.leyou.item.service.BrandService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class BrandServiceImpl implements BrandService {
 
     @Autowired
@@ -52,7 +58,6 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    @Transactional
     public void saveBrand(BrandDTO brandDTO, List<Long> ids) {
         //新增品牌
         Brand brand = BeanHelper.copyProperties(brandDTO, Brand.class);
@@ -69,4 +74,58 @@ public class BrandServiceImpl implements BrandService {
             throw new LyException(ExceptionEnum.INSERT_OPERATION_FAIL);
         }
     }
+
+    /**
+     * 修改品牌
+     * @param brandDTO
+     * @param ids
+     */
+    @Override
+    public void updateBrand(BrandDTO brandDTO, List<Long> ids) {
+        Brand brand = BeanHelper.copyProperties(brandDTO, Brand.class);
+        int count = brandMapper.updateById(brand);
+        if (count != 1){
+            throw new LyException(ExceptionEnum.UPDATE_OPERATION_FAIL);
+        }
+        //先根据brand_id删除中间表数据
+        count = brandMapper.deleteBYBrandId(brand.getId());
+        if (!SqlHelper.retBool(count)){
+            throw new LyException(ExceptionEnum.DELETE_OPERATION_FAIL);
+        }
+        //再新增
+        count = brandMapper.insertCategoryBrand(brand.getId(), ids);
+        if (count != ids.size()){
+            throw new LyException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+    }
+
+    /**
+     * 根据品牌id删除
+     * @param id
+     */
+    @Override
+    public void deleteByBrandId(Long id) {
+        //删除对应的品牌
+        int count = brandMapper.deleteById(id);
+        if (count != 1){
+            throw new LyException(ExceptionEnum.DELETE_OPERATION_FAIL);
+        }
+        //删除中间表的数据
+        count = brandMapper.deleteBYBrandId(id);
+        if (!SqlHelper.retBool(count)){
+            throw new LyException(ExceptionEnum.DELETE_OPERATION_FAIL);
+        }
+    }
+
+    /**
+     * 根据品牌id查询
+     * @param brandId
+     * @return
+     */
+    @Override
+    public Brand queryBrandById(Long brandId) {
+        return brandMapper.selectById(brandId);
+    }
+
+
 }
