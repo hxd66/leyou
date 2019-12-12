@@ -44,7 +44,7 @@
         <td class="text-xs-center">{{ props.item.brandName }}</td>
         <td class="justify-center layout px-0">
           <v-tooltip left>
-            <v-btn slot="activator" icon @click="goodsDetail(props.item.id)">
+            <v-btn slot="activator" icon @click="goodsDetail(props.item)">
               <i class="el-icon-search"/>
             </v-btn>
             <span> 查看商品</span>
@@ -56,7 +56,7 @@
             <span> 修改商品</span>
           </v-tooltip>
           <v-tooltip left>
-            <v-btn icon slot="activator">
+            <v-btn icon slot="activator" @click="deleteGoods(props.item)">
               <i class="el-icon-delete"/>
             </v-btn>
             <span> 删除商品</span>
@@ -221,8 +221,34 @@
             this.$message.error("操作失败，请重试！");
           })
       },
-      goodsDetail(id){
-        this.$message.info("同学，自己也动手写点东西吧。");
+      async deleteGoods(oldGoods){
+          if (oldGoods.saleable){
+              //如果是上架商品，则不允许删除
+              this.$message.error("不能删除上架商品，请先下架！");
+              return;
+          }
+          //发起删除请求
+          this.$message.confirm("确认要删除该参数吗？")
+              .then(() => {
+                  this.$http.delete("/item/spu/delete/?id=" + oldGoods.id)
+                      .then(resp => {
+                          this.getDataFromServer();
+                          this.$message.success("操作成功！");
+                      })
+                      .catch(error => {
+                          this.$.message.error("操作失败，请重试！");
+                      })
+              })
+      },
+        async goodsDetail(oldGoods){
+        oldGoods.spuDetail = await this.$http.loadData("/item/spu/detail?id=" + oldGoods.id);
+        oldGoods.skus = await this.$http.loadData("item/sku/of/spu?id=" + oldGoods.id);
+
+        this.show = true;
+
+        this.isEdit = true;
+
+        this.oldGoods = oldGoods;
       }
     },
     components: {

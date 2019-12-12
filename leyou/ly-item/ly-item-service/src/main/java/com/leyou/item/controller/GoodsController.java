@@ -1,13 +1,19 @@
 package com.leyou.item.controller;
 
 import com.leyou.common.vo.PageResult;
+import com.leyou.item.dto.SkuDTO;
 import com.leyou.item.dto.SpuDTO;
+import com.leyou.item.dto.SpuDetailDTO;
+import com.leyou.item.entity.Sku;
 import com.leyou.item.entity.Spu;
+import com.leyou.item.entity.SpuDetail;
 import com.leyou.item.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class GoodsController {
@@ -38,4 +44,48 @@ public class GoodsController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 商品上下架
+     * http://api.leyou.com/api/item/spu/saleable
+     */
+    @PutMapping("spu/saleable")
+    public ResponseEntity<Void> updateSaleable(@RequestParam("id")Long id,
+                                               @RequestParam("saleable") Boolean saleable){
+        goodsService.updateSaleable(id,saleable);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * http://api.leyou.com/api/item/spu/detail?id=195
+     */
+    @GetMapping("spu/detail")
+    public ResponseEntity<SpuDetailDTO> querySpuDetailById(@RequestParam("id")Long id){
+        return ResponseEntity.ok(goodsService.querySpuDetailById(id));
+    }
+
+    /**
+     * /item/sku/of/spu?id
+     */
+    @GetMapping("sku/of/spu")
+    public ResponseEntity<List<SkuDTO>> querySkuBySpuId(@RequestParam("id") Long id){
+        return ResponseEntity.ok(goodsService.querySkuBySpuId(id));
+    }
+
+    /**
+     * http://api.leyou.com/api/item/goods
+     */
+    @PutMapping("goods")
+    public ResponseEntity<Void> updateGoods(@RequestBody SpuDTO spuDTO){
+        goodsService.updateGoods(spuDTO);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * http://api.leyou.com/api/item/spu/delete/?id=3
+     */
+    @DeleteMapping("spu/delete")
+    public ResponseEntity<Void> deleteGoods(@RequestParam("id") Long id){
+        goodsService.deleteGoods(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
