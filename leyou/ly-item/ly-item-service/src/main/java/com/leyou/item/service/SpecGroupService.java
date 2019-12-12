@@ -6,10 +6,12 @@ import com.leyou.item.dto.SpecParamDTO;
 
 import java.util.List;
 
-public interface SpecService {
+public interface SpecGroupService {
     List<SpecGroupDTO> queryGroupByCategory(Long cid);
 
-    List<SpecParamDTO> queryParamByGroupId(Long gid, Long cid, Boolean searching);
-
     void saveSpecGroup(SpecGroupDTO specGroupDTO);
+
+    void updateSpecGroup(SpecGroupDTO specGroupDTO);
+
+    void deleteSpecGroup(Long id);
 }

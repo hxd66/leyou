@@ -5,10 +5,9 @@ import com.leyou.item.dto.SpuDTO;
 import com.leyou.item.entity.Spu;
 import com.leyou.item.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class GoodsController {
@@ -27,4 +26,16 @@ public class GoodsController {
             @RequestParam(value = "rows",defaultValue = "5") Integer rows){
         return ResponseEntity.ok(goodsService.querySpuByPage(key,saleable,page,rows));
     }
+
+    /**
+     * 新增商品
+     * @param spuDTO spu里包含了所有需要的属性
+     * @return
+     */
+    @PostMapping("goods")
+    public ResponseEntity<Void> saveSpu(@RequestBody SpuDTO spuDTO){
+        goodsService.saveSpu(spuDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }

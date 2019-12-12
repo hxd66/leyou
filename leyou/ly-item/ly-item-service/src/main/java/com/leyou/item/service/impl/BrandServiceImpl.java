@@ -127,5 +127,21 @@ public class BrandServiceImpl implements BrandService {
         return brandMapper.selectById(brandId);
     }
 
+    /**
+     * 根据groupid查询
+     * @param id  cateGoryId
+     * @return
+     */
+    @Override
+    public List<BrandDTO> queryByGroupId(Long id) {
+        //关联表查询
+        List<Brand> brandList = brandMapper.selectByGroupId(id);
+        //然后再根据品牌id查询品牌返回
+        if (CollectionUtils.isEmpty(brandList)){
+            throw new LyException(ExceptionEnum.BRAND_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(brandList,BrandDTO.class);
+    }
+
 
 }

@@ -21,9 +21,11 @@ public class SpuDTO {
     private String categoryName; // 商品分类名称拼接
     private String brandName;// 品牌名称
 
+    private SpuDetailDTO spuDetail;   //商品详情
+    private List<SkuDTO> skus;   //sku集合，一对多的关系
+
     /**
      * 方便同时获取3级分类
-     *
      * @return
      */
     @JsonIgnore

@@ -144,6 +144,7 @@
         this.show = true;
       },
       addParam() {
+        this.isEdit = false;
         this.param = {
           cid: this.group.cid,
           groupId: this.group.id,
@@ -160,6 +161,7 @@
             this.$http.delete("/item/spec/param/" + id)
               .then(() => {
                 this.$message.success("删除成功");
+                this.loadData();
               })
               .catch(() => {
                 this.$message.error("删除失败");

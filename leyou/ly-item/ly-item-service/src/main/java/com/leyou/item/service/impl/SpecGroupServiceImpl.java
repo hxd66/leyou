@@ -1,6 +1,7 @@
 package com.leyou.item.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
@@ -10,17 +11,22 @@ import com.leyou.item.entity.SpecGroup;
 import com.leyou.item.entity.SpecParam;
 import com.leyou.item.mapper.SpecGroupMapper;
 import com.leyou.item.mapper.SpecParamMapper;
-import com.leyou.item.service.SpecService;
+import com.leyou.item.service.SpecGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
 @Service
-public class SpecServiceImpl implements SpecService {
+@Transactional
+public class SpecGroupServiceImpl implements SpecGroupService {
     @Autowired
     private SpecGroupMapper specGroupMapper;
+
+    @Autowired
+    private SpecParamMapper specParamMapper;
 
     /**
      * 根据cid查询规则组
@@ -40,21 +46,6 @@ public class SpecServiceImpl implements SpecService {
         return BeanHelper.copyWithCollection(specGroupList,SpecGroupDTO.class);
     }
 
-    @Autowired
-    private SpecParamMapper specParamMapper;
-    @Override
-    public List<SpecParamDTO> queryParamByGroupId(Long gid, Long cid, Boolean searching) {
-        //封装查询条件
-        SpecParam specParam = new SpecParam();
-        specParam.setCid(cid);
-        specParam.setGroupId(gid);
-        specParam.setSearching(searching);
-        List<SpecParam> specParamList = specParamMapper.selectList(new QueryWrapper<>(specParam));
-        if (CollectionUtils.isEmpty(specParamList)){
-            throw new LyException(ExceptionEnum.SPEC_NOT_FOUND);
-        }
-        return BeanHelper.copyWithCollection(specParamList,SpecParamDTO.class);
-    }
 
     /**
      * 新增
@@ -67,5 +58,31 @@ public class SpecServiceImpl implements SpecService {
         if (count != 1){
             throw new LyException(ExceptionEnum.INSERT_OPERATION_FAIL);
         }
+    }
+
+    @Override
+    public void updateSpecGroup(SpecGroupDTO specGroupDTO) {
+        int count = specGroupMapper.updateById(BeanHelper.copyProperties(specGroupDTO, SpecGroup.class));
+        if (count != 1){
+            throw new LyException(ExceptionEnum.UPDATE_OPERATION_FAIL);
+        }
+    }
+
+    @Override
+    public void deleteSpecGroup(Long id) {
+        int count = specGroupMapper.deleteById(id);
+        if (count != 1){
+            throw new LyException(ExceptionEnum.DELETE_OPERATION_FAIL);
+        }
+        SpecParam specParam = new SpecParam();
+        specParam.setGroupId(id);
+        List<SpecParam> specParamList = specParamMapper.selectList(new QueryWrapper<>(specParam));
+        if (!CollectionUtils.isEmpty(specParamList)){
+            count = specParamMapper.delete(new QueryWrapper<>(specParam));
+            if (!SqlHelper.retBool(count)){
+                throw new LyException(ExceptionEnum.DELETE_OPERATION_FAIL);
+            }
+        }
+
     }
 }

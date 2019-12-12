@@ -16,4 +16,6 @@ public interface BrandService {
     void deleteByBrandId(Long id);
 
     Brand queryBrandById(Long brandId);
+
+    List<BrandDTO> queryByGroupId(Long id);
 }

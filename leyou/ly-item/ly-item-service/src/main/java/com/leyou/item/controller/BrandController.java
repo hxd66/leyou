@@ -1,7 +1,9 @@
 package com.leyou.item.controller;
 
+import com.leyou.common.utils.BeanHelper;
 import com.leyou.common.vo.PageResult;
 import com.leyou.item.dto.BrandDTO;
+import com.leyou.item.entity.Brand;
 import com.leyou.item.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("brand")
 public class BrandController {
     @Autowired
     private BrandService brandService;
@@ -25,7 +26,7 @@ public class BrandController {
      * @param desc
      * @return
      */
-    @GetMapping("page")
+    @GetMapping("brand/page")
     public ResponseEntity<PageResult<BrandDTO>> queryBrandByPage(
             @RequestParam(value = "page",defaultValue = "1")Integer page,
             @RequestParam(value = "rows",defaultValue = "5") Integer rows,
@@ -37,7 +38,7 @@ public class BrandController {
         return ResponseEntity.ok(brandService.queryBrandByPage(page,rows,key,sortBy,desc));
     }
 
-    @PostMapping
+    @PostMapping("brand")
     public ResponseEntity<Void> saveBrand(BrandDTO brandDTO,
                                           @RequestParam("cids")List<Long> ids){
         System.err.println(brandDTO);
@@ -45,7 +46,7 @@ public class BrandController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping
+    @PutMapping("brand")
     public ResponseEntity<Void> updateBrand(BrandDTO brandDTO,@RequestParam("cids")List<Long> ids){
         brandService.updateBrand(brandDTO,ids);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -54,9 +55,18 @@ public class BrandController {
     /**
      * http://api.leyou.com/api/item/brand/?id=1115
      */
-    @DeleteMapping
+    @DeleteMapping("brand")
     public ResponseEntity<Void> deleteByBrandId(@RequestParam("id") Long id){
         brandService.deleteByBrandId(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * 新增商品时，需要先查询所属品牌分类
+     * http://api.leyou.com/api/item/brand/of/category?id=79
+     */
+    @GetMapping("brand/of/category")
+    public ResponseEntity<List<BrandDTO>> queryByGroupId(@RequestParam("id") Long id){
+        return ResponseEntity.ok(brandService.queryByGroupId(id));
     }
 }

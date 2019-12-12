@@ -1,9 +1,8 @@
 package com.leyou.item.controller;
 
-import com.leyou.common.vo.PageResult;
 import com.leyou.item.dto.SpecGroupDTO;
 import com.leyou.item.dto.SpecParamDTO;
-import com.leyou.item.service.SpecService;
+import com.leyou.item.service.SpecGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class SpecController {
+public class SpecGroupController {
     @Autowired
-    private SpecService specService;
+    private SpecGroupService specGroupService;
 
     /**
      * 根据cid查询规格组
@@ -24,26 +23,34 @@ public class SpecController {
      */
     @GetMapping("spec/groups/of/category")
     public ResponseEntity<List<SpecGroupDTO>> queryGroupByCategory(@RequestParam("id") Long cid){
-        return ResponseEntity.ok(specService.queryGroupByCategory(cid));
+        return ResponseEntity.ok(specGroupService.queryGroupByCategory(cid));
     }
 
-    /**
-     * http://api.leyou.com/api/item/spec/params?gid=1
-     */
-    @GetMapping("spec/params")
-    public ResponseEntity<List<SpecParamDTO>> queryParamByGroupId(
-            @RequestParam(value = "gid",required = false)Long gid,
-            @RequestParam(value = "cid",required = false)Long cid,
-            @RequestParam(value = "searching",required = false)Boolean searching){
-        return ResponseEntity.ok(specService.queryParamByGroupId(gid,cid,searching));
-    }
 
     /**
      * http://api.leyou.com/api/item/spec/group
      */
     @PostMapping("spec/group")
     public ResponseEntity<Void> saveSpecGroup(@RequestBody SpecGroupDTO specGroupDTO){
-        specService.saveSpecGroup(specGroupDTO);
+        specGroupService.saveSpecGroup(specGroupDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * http://api.leyou.com/api/item/spec/group
+     */
+    @PutMapping("spec/group")
+    public ResponseEntity<Void> updateSpecGroup(@RequestBody SpecGroupDTO specGroupDTO){
+        specGroupService.updateSpecGroup(specGroupDTO);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * http://api.leyou.com/api/item/spec/group/15
+     */
+    @DeleteMapping("spec/group/{id}")
+    public ResponseEntity<Void> deleteSpecGroup(@PathVariable("id")Long id){
+        specGroupService.deleteSpecGroup(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

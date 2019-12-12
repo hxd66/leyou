@@ -7,10 +7,16 @@ import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
 import com.leyou.common.vo.PageResult;
 import com.leyou.item.dto.CategoryDTO;
+import com.leyou.item.dto.SkuDTO;
 import com.leyou.item.dto.SpuDTO;
+import com.leyou.item.dto.SpuDetailDTO;
 import com.leyou.item.entity.Brand;
+import com.leyou.item.entity.Sku;
 import com.leyou.item.entity.Spu;
+import com.leyou.item.entity.SpuDetail;
 import com.leyou.item.mapper.BrandMapper;
+import com.leyou.item.mapper.SkuMapper;
+import com.leyou.item.mapper.SpuDetailMapper;
 import com.leyou.item.mapper.SpuMapper;
 import com.leyou.item.service.BrandService;
 import com.leyou.item.service.CategoryService;
@@ -18,12 +24,14 @@ import com.leyou.item.service.GoodsService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class GoodsServiceImpl implements GoodsService {
     @Autowired
     private SpuMapper spuMapper;
@@ -31,6 +39,10 @@ public class GoodsServiceImpl implements GoodsService {
     private CategoryService categoryService;
     @Autowired
     private BrandService brandService;
+    @Autowired
+    private SpuDetailMapper detailMapper;
+    @Autowired
+    private SkuMapper skuMapper;
 
     /**
      * @param key  模糊查询的条件
@@ -59,6 +71,41 @@ public class GoodsServiceImpl implements GoodsService {
 
         handleCategoryAndBrandName(spuDTOList);
         return new PageResult<>(spuPage.getTotal(),spuDTOList);
+    }
+
+    /**
+     * 这里要添加spu的话，也需要把sku和spu_detial添加了
+     * @param spuDTO
+     */
+    @Override
+    public void saveSpu(SpuDTO spuDTO) {
+        //开始新增商品
+        Spu spu = BeanHelper.copyProperties(spuDTO, Spu.class);
+        spu.setSaleable(false);   //是否上架
+        int count = spuMapper.insert(spu);
+        if (count != 1){
+            throw new LyException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+        //对spuDetail的初始化
+        SpuDetailDTO spuDetailDTO = spuDTO.getSpuDetail();
+        SpuDetail spuDetail = BeanHelper.copyProperties(spuDetailDTO, SpuDetail.class);
+        spuDetail.setSpuId(spu.getId());
+        count = detailMapper.insert(spuDetail);
+        if (count != 1){
+            throw new LyException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+        count = 0;  //初始化count
+        //对sku进行初始化
+        List<SkuDTO> skuDTOS = spuDTO.getSkus();
+        for (SkuDTO skuDTO : skuDTOS) {
+            skuDTO.setSpuId(spu.getId());
+            Sku sku = BeanHelper.copyProperties(skuDTO, Sku.class);
+            count = skuMapper.insert(sku) + count;
+        }
+        if (count != skuDTOS.size() || count == 0){
+            throw new LyException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+
     }
 
     /**
