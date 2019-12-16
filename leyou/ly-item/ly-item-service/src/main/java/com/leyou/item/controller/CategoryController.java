@@ -27,4 +27,26 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDTO>> queryByBrandId(@RequestParam("id")Long bid){
         return ResponseEntity.ok(categoryService.queryByBrandId(bid));
     }
+
+    /**
+     * 根据id集合查询分类
+     * @param ids
+     * @return
+     */
+    @GetMapping("category/list")
+    public ResponseEntity<List<CategoryDTO>> queryCategoryByIds(@RequestParam("ids") List<Long> ids){
+        return ResponseEntity.ok(categoryService.queryCategoryByIds(ids));
+    }
+
+    /**
+     * 根据3级分类的id，查询1-3级的分类
+     * @param id
+     * @return
+     */
+    @GetMapping("category/levels")
+    public ResponseEntity<List<CategoryDTO>> queryAllByCid3(@RequestParam("id") Long id){
+        return ResponseEntity.ok(categoryService.queryAllByCid3(id));
+    }
+
+
 }

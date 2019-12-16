@@ -1,7 +1,6 @@
 package com.leyou.item.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.leyou.common.enums.ExceptionEnum;
@@ -13,14 +12,10 @@ import com.leyou.item.entity.Brand;
 import com.leyou.item.mapper.BrandMapper;
 import com.leyou.item.service.BrandService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -123,8 +118,8 @@ public class BrandServiceImpl implements BrandService {
      * @return
      */
     @Override
-    public Brand queryBrandById(Long brandId) {
-        return brandMapper.selectById(brandId);
+    public BrandDTO queryBrandById(Long brandId) {
+        return BeanHelper.copyProperties(brandMapper.selectById(brandId),BrandDTO.class);
     }
 
     /**
@@ -137,6 +132,15 @@ public class BrandServiceImpl implements BrandService {
         //关联表查询
         List<Brand> brandList = brandMapper.selectByGroupId(id);
         //然后再根据品牌id查询品牌返回
+        if (CollectionUtils.isEmpty(brandList)){
+            throw new LyException(ExceptionEnum.BRAND_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(brandList,BrandDTO.class);
+    }
+
+    @Override
+    public List<BrandDTO> queryBrandByIds(List<Long> ids) {
+        List<Brand> brandList = brandMapper.selectBatchIds(ids);
         if (CollectionUtils.isEmpty(brandList)){
             throw new LyException(ExceptionEnum.BRAND_NOT_FOUND);
         }

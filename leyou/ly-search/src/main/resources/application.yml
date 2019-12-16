@@ -1,0 +1,17 @@
+server:
+  port: 8003   #端口号
+spring:
+  application:
+    name: search-service    #应用名称
+  data:
+    elasticsearch:
+      cluster-name: elasticsearch
+      cluster-nodes: 127.0.0.1:9300    #9200是elasticsearch的图形端，9300是客户端
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka    #注册到eureka的服务上
+    registry-fetch-interval-seconds: 5   #每5秒拉取服务一次，默认30秒
+  instance:
+    prefer-ip-address: true    #倾向于使用IP地址
+    ip-address: 127.0.0.1   #ip

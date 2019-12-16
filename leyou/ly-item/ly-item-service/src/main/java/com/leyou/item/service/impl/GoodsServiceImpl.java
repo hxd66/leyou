@@ -7,15 +7,10 @@ import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
 import com.leyou.common.vo.PageResult;
-import com.leyou.item.dto.CategoryDTO;
-import com.leyou.item.dto.SkuDTO;
-import com.leyou.item.dto.SpuDTO;
-import com.leyou.item.dto.SpuDetailDTO;
-import com.leyou.item.entity.Brand;
+import com.leyou.item.dto.*;
 import com.leyou.item.entity.Sku;
 import com.leyou.item.entity.Spu;
 import com.leyou.item.entity.SpuDetail;
-import com.leyou.item.mapper.BrandMapper;
 import com.leyou.item.mapper.SkuMapper;
 import com.leyou.item.mapper.SpuDetailMapper;
 import com.leyou.item.mapper.SpuMapper;
@@ -252,9 +247,9 @@ public class GoodsServiceImpl implements GoodsService {
                     .map(CategoryDTO::getName).collect(Collectors.joining("/"));
             spuDTO.setCategoryName(categoryNames);
             //查询品牌
-            Brand brand = brandService.queryBrandById(spuDTO.getBrandId());
+            BrandDTO brandDTO = brandService.queryBrandById(spuDTO.getBrandId());
             //设置spuDTO属性
-            spuDTO.setBrandName(brand.getName());
+            spuDTO.setBrandName(brandDTO.getName());
         }
     }
 }

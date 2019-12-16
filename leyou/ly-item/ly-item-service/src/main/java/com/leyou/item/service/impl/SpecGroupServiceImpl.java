@@ -6,7 +6,6 @@ import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
 import com.leyou.item.dto.SpecGroupDTO;
-import com.leyou.item.dto.SpecParamDTO;
 import com.leyou.item.entity.SpecGroup;
 import com.leyou.item.entity.SpecParam;
 import com.leyou.item.mapper.SpecGroupMapper;

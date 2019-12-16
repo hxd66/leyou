@@ -56,6 +56,7 @@ public class GoodsController {
     }
 
     /**
+     * 根据spuId查询spuDetail
      * http://api.leyou.com/api/item/spu/detail?id=195
      */
     @GetMapping("spu/detail")
@@ -64,6 +65,7 @@ public class GoodsController {
     }
 
     /**
+     * 根据spuID查询sku列表
      * /item/sku/of/spu?id
      */
     @GetMapping("sku/of/spu")

@@ -9,11 +9,11 @@ import com.leyou.item.entity.Category;
 import com.leyou.item.mapper.CategoryMapper;
 import com.leyou.item.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -49,5 +49,27 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDTO> queryCategoryByIds(List<Long> ids) {
         List<Category> categoryList = categoryMapper.selectBatchIds(ids);
         return BeanHelper.copyWithCollection(categoryList,CategoryDTO.class);
+    }
+
+    @Override
+    public List<CategoryDTO> queryAllByCid3(Long id) {
+        //先根据3级分类查询对应的分类
+        Category category3 = categoryMapper.selectById(id);
+        if (category3 == null){
+            throw new LyException(ExceptionEnum.CATEGORY_NOT_FOUND);
+        }
+        //再根据3级分类的父id查询分类
+        Category category2 = categoryMapper.selectById(category3.getParentId());
+        if (category2 == null){
+            throw new LyException(ExceptionEnum.CATEGORY_NOT_FOUND);
+        }
+        //再根据2级分类的父id查询分类
+        Category category1 = categoryMapper.selectById(category2.getParentId());
+        if (category1 == null){
+            throw new LyException(ExceptionEnum.CATEGORY_NOT_FOUND);
+        }
+        //转换为集合
+        List<Category> list = Arrays.asList(category1,category2,category3);
+        return BeanHelper.copyWithCollection(list,CategoryDTO.class);
     }
 }

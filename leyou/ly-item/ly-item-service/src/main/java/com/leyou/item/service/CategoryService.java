@@ -12,4 +12,7 @@ public interface CategoryService {
     List<CategoryDTO> queryByBrandId(Long bid);
 
     List<CategoryDTO> queryCategoryByIds(List<Long> ids);
+
+    //根据3级分类id，查询1~3级的分类
+    List<CategoryDTO> queryAllByCid3(Long id);
 }

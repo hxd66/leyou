@@ -16,7 +16,7 @@ public class SpecParamController {
     private SpecParamService specParamService;
 
     /**
-     *
+     * 查询规格参数
      * @param gid  组id
      * @param cid 分类id
      * @param searching  是否用于搜索

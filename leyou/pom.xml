@@ -14,6 +14,8 @@
         <module>ly-item</module>
         <module>ly-common</module>
         <module>ly-upload</module>
+        <module>ly-search</module>
+        <module>ly-page</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
