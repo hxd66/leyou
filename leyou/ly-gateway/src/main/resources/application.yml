@@ -27,6 +27,9 @@ zuul:
     item-service: /item/**    #将商品微服务映射到/item/**
     upload-service: /upload/**
     search-service: /search/**   #将搜索微服务映射到 /search/**
+    user-service: /user/**    #将用户微服务映射到/user/下
+    auth-service: /auth/**     #将授权微服务映射到/auth/**下
+  sensitive-headers:
 ly:
   cors:
     allowedOrigins:

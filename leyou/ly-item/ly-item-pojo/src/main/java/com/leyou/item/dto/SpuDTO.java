@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+
 @Data
 public class SpuDTO {
     private Long id;
@@ -18,15 +19,19 @@ public class SpuDTO {
     private String subTitle;// 子标题
     private Boolean saleable;// 是否上架
     private Date createTime;// 创建时间
+
     private String categoryName; // 商品分类名称拼接
     private String brandName;// 品牌名称
 
-    private SpuDetailDTO spuDetail;   //商品详情
-    private List<SkuDTO> skus;   //sku集合，一对多的关系
+    private SpuDetailDTO spuDetail; //商品详情
+    private List<SkuDTO> skus;      //sku列表
 
     /**
      * 方便同时获取3级分类
+     *
      * @return
+     *
+     * JsonIgnore不进行json解析，忽略该属性
      */
     @JsonIgnore
     public List<Long> getCategoryIds() {

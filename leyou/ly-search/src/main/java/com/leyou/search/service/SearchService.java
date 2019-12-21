@@ -17,4 +17,8 @@ public interface SearchService {
 
     //查询过滤项
     Map<String, List> queryFilters(SearchRequest searchRequest);
+
+    void createIndex(Long id);
+
+    void deleteIndex(Long id);
 }

@@ -53,4 +53,14 @@ public class SpecGroupController {
         specGroupService.deleteSpecGroup(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    /**
+     *查询规格参数组，及组内参数
+     * @param id
+     * @return
+     */
+    @GetMapping("spec/of/category")
+    public ResponseEntity<List<SpecGroupDTO>> querySpecGroupByCid(@RequestParam("id") Long id){
+        return ResponseEntity.ok(specGroupService.querySpecGroupByCid(id));
+    }
 }

@@ -4,9 +4,6 @@ import com.leyou.common.vo.PageResult;
 import com.leyou.item.dto.SkuDTO;
 import com.leyou.item.dto.SpuDTO;
 import com.leyou.item.dto.SpuDetailDTO;
-import com.leyou.item.entity.Sku;
-import com.leyou.item.entity.Spu;
-import com.leyou.item.entity.SpuDetail;
 import com.leyou.item.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -89,5 +86,13 @@ public class GoodsController {
     public ResponseEntity<Void> deleteGoods(@RequestParam("id") Long id){
         goodsService.deleteGoods(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * 根据spu的id查询spu
+     */
+    @GetMapping("spu/{id}")
+    public ResponseEntity<SpuDTO> querySpuById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(goodsService.querySpuById(id));
     }
 }

@@ -11,6 +11,7 @@ import com.leyou.item.dto.*;
 import com.leyou.search.dto.GoodsDTO;
 import com.leyou.search.dto.SearchRequest;
 import com.leyou.search.pojo.Goods;
+import com.leyou.search.repository.GoodsRepository;
 import com.leyou.search.service.SearchService;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -39,6 +40,8 @@ public class SearchServiceImpl implements SearchService {
     private ItemClient itemClient;
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+    @Autowired
+    private GoodsRepository goodsRepository;
 
     /**
      * 把一个Spu转为Goods
@@ -207,6 +210,37 @@ public class SearchServiceImpl implements SearchService {
 
         return filterHash;
     }
+
+    /**
+     * 商品上架新增索引
+     * @param id
+     */
+    @Override
+    public void createIndex(Long id) {
+        try {
+            //查询spu
+            SpuDTO spuDTO = itemClient.querySpuById(id);
+            //转换为goods
+            Goods goods = buildGoods(spuDTO);
+            //保存数据到索引库
+            goodsRepository.save(goods);
+        } catch (Exception e) {
+            throw new LyException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+    }
+
+    /**
+     * 商品下架删除索引
+     */
+    @Override
+    public void deleteIndex(Long id) {
+        try {
+            goodsRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new LyException(ExceptionEnum.DELETE_OPERATION_FAIL);
+        }
+    }
+
 
     /**
      * 封装规格参数

@@ -18,6 +18,7 @@ import com.leyou.item.service.BrandService;
 import com.leyou.item.service.CategoryService;
 import com.leyou.item.service.GoodsService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,10 @@ import org.springframework.util.CollectionUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.leyou.common.constants.MQConstants.Exchange.ITEM_EXCHANGE_NAME;
+import static com.leyou.common.constants.MQConstants.RoutingKey.ITEM_DOWN_KEY;
+import static com.leyou.common.constants.MQConstants.RoutingKey.ITEM_UP_KEY;
 
 @Service
 @Transactional
@@ -40,6 +45,8 @@ public class GoodsServiceImpl implements GoodsService {
     private SpuDetailMapper detailMapper;
     @Autowired
     private SkuMapper skuMapper;
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     /**
      * @param key  模糊查询的条件
@@ -131,6 +138,11 @@ public class GoodsServiceImpl implements GoodsService {
         if (!bool){
             throw new LyException(ExceptionEnum.UPDATE_OPERATION_FAIL);
         }
+
+        //新增发送mq消息
+        String key = saleable ? ITEM_UP_KEY : ITEM_DOWN_KEY;
+        //1.交换机  2.路由  3.消息内容
+        amqpTemplate.convertAndSend(ITEM_EXCHANGE_NAME,key,id);
     }
 
     /**
@@ -233,6 +245,18 @@ public class GoodsServiceImpl implements GoodsService {
         if (!SqlHelper.retBool(count)){
             throw new LyException(ExceptionEnum.DELETE_OPERATION_FAIL);
         }
+    }
+
+    @Override
+    public SpuDTO querySpuById(Long id) {
+        //查询spu
+        Spu spu = spuMapper.selectById(id);
+        SpuDTO spuDTO = BeanHelper.copyProperties(spu, SpuDTO.class);
+        //查询spuDetail
+        spuDTO.setSpuDetail(querySpuDetailById(id));
+        //查询sku
+        spuDTO.setSkus(querySkuBySpuId(id));
+        return spuDTO;
     }
 
     /**

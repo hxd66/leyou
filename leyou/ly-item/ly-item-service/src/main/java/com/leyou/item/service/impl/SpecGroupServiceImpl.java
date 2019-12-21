@@ -6,17 +6,21 @@ import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
 import com.leyou.item.dto.SpecGroupDTO;
+import com.leyou.item.dto.SpecParamDTO;
 import com.leyou.item.entity.SpecGroup;
 import com.leyou.item.entity.SpecParam;
 import com.leyou.item.mapper.SpecGroupMapper;
 import com.leyou.item.mapper.SpecParamMapper;
 import com.leyou.item.service.SpecGroupService;
+import com.leyou.item.service.SpecParamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,6 +31,8 @@ public class SpecGroupServiceImpl implements SpecGroupService {
     @Autowired
     private SpecParamMapper specParamMapper;
 
+    @Autowired
+    private SpecParamService specParamService;
     /**
      * 根据cid查询规则组
      * @param cid
@@ -83,5 +89,24 @@ public class SpecGroupServiceImpl implements SpecGroupService {
             }
         }
 
+    }
+
+    @Override
+    public List<SpecGroupDTO> querySpecGroupByCid(Long id) {
+        //查询规格组，调用之前的方法
+        List<SpecGroupDTO> specGroupDTOS = queryGroupByCategory(id);
+        //查询分类下所有规格参数，调用之前方法
+        List<SpecParamDTO> specParamDTOS = specParamService.queryParamByGroupId(null, id, null);
+
+        //将规格参数按照groupId进行分组，得到每个group下的param的集合
+        Map<Long, List<SpecParamDTO>> paramMap = specParamDTOS.stream().collect(Collectors.groupingBy(SpecParamDTO::getGroupId));
+
+        //先for规格组嵌套for规格参数，判断规格组id是规格参数中组id一致将规格参数对象加入规格组准备的几何中
+        //填写到group中，根据分足后的id获取param
+        for (SpecGroupDTO groupDTO : specGroupDTOS) {
+            groupDTO.setParams(paramMap.get(groupDTO.getId()));
+        }
+
+        return specGroupDTOS;
     }
 }

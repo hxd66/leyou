@@ -21,4 +21,6 @@ public interface GoodsService {
     void updateGoods(SpuDTO spuDTO);
 
     void deleteGoods(Long id);
+
+    SpuDTO querySpuById(Long id);
 }

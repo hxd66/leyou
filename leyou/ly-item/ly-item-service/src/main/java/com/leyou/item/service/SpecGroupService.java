@@ -14,4 +14,6 @@ public interface SpecGroupService {
     void updateSpecGroup(SpecGroupDTO specGroupDTO);
 
     void deleteSpecGroup(Long id);
+
+    List<SpecGroupDTO> querySpecGroupByCid(Long id);
 }

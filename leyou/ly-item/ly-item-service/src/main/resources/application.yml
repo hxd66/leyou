@@ -8,6 +8,18 @@ spring:
     url: jdbc:mysql://localhost:3306/leyou?characterEncoding=utf-8
     username: root
     password: root
+  rabbitmq:
+    host: 127.0.0.1
+    username: leyou
+    password: leyou
+    virtual-host: /leyou
+    template:
+      retry:
+        enabled: true   #开启失败重试
+        initial-interval: 10000ms     #第一次重试的间隔时长，默认1秒
+        max-interval: 80000ms    #最长重试的间隔，超过这个时间将不再重试，默认10秒
+        multiplier: 2     #下次重试间隔的倍数，此处是2即下次重试间隔是上次的2倍，默认1
+    publisher-confirms: true    #生产者确认机制，确保消息会正确发送，发送失败会有回执，除法重试，默认false
 eureka:
   client:
     service-url:

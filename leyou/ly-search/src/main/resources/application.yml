@@ -7,6 +7,11 @@ spring:
     elasticsearch:
       cluster-name: elasticsearch
       cluster-nodes: 127.0.0.1:9300    #9200是elasticsearch的图形端，9300是客户端
+  rabbitmq:
+    virtual-host: /leyou
+    username: leyou
+    password: leyou
+    host: 127.0.0.1
 eureka:
   client:
     service-url:
