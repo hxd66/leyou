@@ -3,6 +3,7 @@ package com.leyou.auth.controller;
 import com.leyou.auth.service.AuthService;
 import com.leyou.common.auth.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 @RestController
+@RefreshScope
 public class AuthController {
     @Autowired
     private AuthService authService;
@@ -45,5 +47,17 @@ public class AuthController {
                                                HttpServletResponse response){
         //成功后直接返回
         return ResponseEntity.ok(authService.verifyUser(request,response));
+    }
+
+    /**
+     * 退出登录
+     * @param request  用来获取cookie
+     * @param response 用来操作cookie
+     * @return
+     */
+    @PostMapping("logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response){
+        authService.logout(request,response);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

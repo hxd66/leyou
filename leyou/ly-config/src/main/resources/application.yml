@@ -1,0 +1,21 @@
+server:
+  port: 12000
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://gitee.com/mkde/leyou-config.git
+  rabbitmq:
+    virtual-host: /leyou
+    host: 127.0.0.1
+    port: 5672
+    username: leyou
+    password: leyou
+management: #暴露触发消息总线的地址
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh  #固定配置不能改

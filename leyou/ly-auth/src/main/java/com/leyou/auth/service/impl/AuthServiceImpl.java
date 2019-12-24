@@ -13,6 +13,7 @@ import com.leyou.user.dto.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,8 +27,17 @@ public class AuthServiceImpl implements AuthService {
     private JwtProperties prop;
     @Autowired
     private UserClient userClient;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     private static final String USER_ROLE = "user_role";
+
+    /**
+     * 用户登录
+     * @param username  用户名
+     * @param password 密码
+     * @param response 操作cookie
+     */
     @Override
     public void login(String username, String password, HttpServletResponse response) {
         try {
@@ -37,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
             UserInfo userInfo = new UserInfo(userDTO.getId(), userDTO.getUsername(), USER_ROLE);
             //生成token
             String token = JwtUtils.generateTokenExpireInMinutes(userInfo, prop.getPrivateKey(), prop.getUser().getExpire());
+
             //写入cookie
             CookieUtils.newCookieBuilder()
                     .response(response)    //response，用于写cookie
@@ -64,6 +75,15 @@ public class AuthServiceImpl implements AuthService {
             String token = CookieUtils.getCookieValue(request, prop.getUser().getCookieName());
             //获取token信息
             Payload<UserInfo> payLoad = JwtUtils.getInfoFromToken(token, prop.getPublicKey(), UserInfo.class);
+            //获取token的id。，校验黑名单
+            String id = payLoad.getId();
+            //判断redis中是否存在该tokenId
+            Boolean boo = redisTemplate.hasKey(id);
+            if (boo != null && boo){
+                //如果存在，直接抛出异常
+                throw new LyException(ExceptionEnum.UNAUTHORIZED);
+            }
+
             //获取过期时间
             Date expiration = payLoad.getExpiration();
             //获取刷新时间
@@ -88,5 +108,27 @@ public class AuthServiceImpl implements AuthService {
             // 抛出异常，证明token无效，直接返回401
             throw new LyException(ExceptionEnum.UNAUTHORIZED);
         }
+    }
+
+    /**
+     * 用户退出
+     * @param request
+     * @param response
+     */
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        //获取token
+        String token = CookieUtils.getCookieValue(request, prop.getUser().getCookieName());
+        //解析token
+        Payload<UserInfo> payload = JwtUtils.getInfoFromToken(token, prop.getPublicKey(), UserInfo.class);
+        //获取id和有效时长
+        String id = payload.getId();
+        long time = payload.getExpiration().getTime() - System.currentTimeMillis();
+        //写入reids,剩余时间超过5秒才写入
+        if (time > 5000){
+            redisTemplate.boundValueOps(id).set(id,time);
+        }
+        //删除cookie
+        CookieUtils.deleteCookie(prop.getUser().getCookieName(),prop.getUser().getCookieDomain(),response);
     }
 }

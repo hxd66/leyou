@@ -29,6 +29,7 @@ zuul:
     search-service: /search/**   #将搜索微服务映射到 /search/**
     user-service: /user/**    #将用户微服务映射到/user/下
     auth-service: /auth/**     #将授权微服务映射到/auth/**下
+    cart-service: /cart/**        #将购物车微服务映射到/cart/**下
   sensitive-headers:
 ly:
   cors:
@@ -47,4 +48,15 @@ ly:
     - HEAD
     maxAge: 360000
     filterPath: "/**"
-
+  jwt:
+    pubKeyPath: E:/ssh/id_rsa.pub # 公钥地址
+    user:
+      cookieName: LY_TOKEN # cookie名称
+  filter:
+    allowPaths:
+    - /api/auth/login
+    - /api/search
+    - /api/user/register
+    - /api/user/check
+    - /api/user/code
+    - /api/item

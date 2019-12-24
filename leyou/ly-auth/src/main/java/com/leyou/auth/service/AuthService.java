@@ -10,4 +10,5 @@ public interface AuthService {
 
     UserInfo verifyUser(HttpServletRequest request, HttpServletResponse response);
 
+    void logout(HttpServletRequest request, HttpServletResponse response);
 }

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
+@RefreshScope
 public class UserController {
     @Autowired
     private UserService userService;
@@ -80,4 +82,6 @@ public class UserController {
     ){
         return ResponseEntity.ok(userService.queryUserByUsernameAndPassword(username,password));
     }
+
+
 }

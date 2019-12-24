@@ -23,4 +23,6 @@ public interface GoodsService {
     void deleteGoods(Long id);
 
     SpuDTO querySpuById(Long id);
+
+    List<SkuDTO> querySkusByIds(List<Long> ids);
 }

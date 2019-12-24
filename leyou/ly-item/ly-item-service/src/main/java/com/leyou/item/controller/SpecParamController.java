@@ -4,6 +4,7 @@ import com.leyou.item.dto.SpecParamDTO;
 import com.leyou.item.service.SpecGroupService;
 import com.leyou.item.service.SpecParamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RefreshScope
 public class SpecParamController {
     @Autowired
     private SpecParamService specParamService;

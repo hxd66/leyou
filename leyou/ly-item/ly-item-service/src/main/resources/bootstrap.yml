@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      name: item   #文件命名规则中应用名称
+      profile: dev  #文件命名规则中类型名称
+      label: master   #git仓库分支名称
+      uri: http://127.0.0.1:12000 #配置中心地址

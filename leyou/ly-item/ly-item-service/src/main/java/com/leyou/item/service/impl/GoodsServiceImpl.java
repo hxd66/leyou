@@ -260,6 +260,20 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     /**
+     * 展示购物车数据
+     * @param ids
+     * @return
+     */
+    @Override
+    public List<SkuDTO> querySkusByIds(List<Long> ids) {
+        List<Sku> skuList = skuMapper.selectBatchIds(ids);
+        if (CollectionUtils.isEmpty(skuList)){
+            throw new LyException(ExceptionEnum.GOODS_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(skuList,SkuDTO.class);
+    }
+
+    /**
      * 封装分类列表和品牌名字
      @param spuDTOList
      */

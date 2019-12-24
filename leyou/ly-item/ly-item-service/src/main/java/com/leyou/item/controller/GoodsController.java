@@ -6,6 +6,7 @@ import com.leyou.item.dto.SpuDTO;
 import com.leyou.item.dto.SpuDetailDTO;
 import com.leyou.item.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RefreshScope
 public class GoodsController {
     @Autowired
     private GoodsService goodsService;
@@ -94,5 +96,14 @@ public class GoodsController {
     @GetMapping("spu/{id}")
     public ResponseEntity<SpuDTO> querySpuById(@PathVariable("id") Long id){
         return ResponseEntity.ok(goodsService.querySpuById(id));
+    }
+
+    /**
+     * http://api.leyou.com/api/item/sku/list?ids=27359021560
+     * 根据skuId集合查询sku，展示购物车
+     */
+    @GetMapping("sku/list")
+    public ResponseEntity<List<SkuDTO>> querySkusByIds(@RequestParam("ids") List<Long> ids){
+        return ResponseEntity.ok(goodsService.querySkusByIds(ids));
     }
 }
