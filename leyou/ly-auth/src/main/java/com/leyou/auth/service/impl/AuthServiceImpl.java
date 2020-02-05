@@ -13,8 +13,10 @@ import com.leyou.user.dto.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -112,8 +114,6 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * 用户退出
-     * @param request
-     * @param response
      */
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response) {

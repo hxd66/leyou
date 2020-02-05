@@ -26,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.leyou.common.constants.MQConstants.Exchange.ITEM_EXCHANGE_NAME;
@@ -271,6 +272,18 @@ public class GoodsServiceImpl implements GoodsService {
             throw new LyException(ExceptionEnum.GOODS_NOT_FOUND);
         }
         return BeanHelper.copyWithCollection(skuList,SkuDTO.class);
+    }
+
+    @Override
+    public void minusStock(Map<Long, Integer> cartMap) {
+        for (Map.Entry<Long, Integer> entry : cartMap.entrySet()) {
+            Long skuId = entry.getKey();
+            Integer num = entry.getValue();
+            int count = skuMapper.minusStock(skuId,num);
+            if (count != 1){
+                throw new LyException(ExceptionEnum.STOCK_NOT_ENOUGH_ERROR);
+            }
+        }
     }
 
     /**

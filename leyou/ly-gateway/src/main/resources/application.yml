@@ -30,6 +30,10 @@ zuul:
     user-service: /user/**    #将用户微服务映射到/user/下
     auth-service: /auth/**     #将授权微服务映射到/auth/**下
     cart-service: /cart/**        #将购物车微服务映射到/cart/**下
+    order-service:
+      path: /order/**
+      serviceId: order-service
+      strip-prefix: false
   sensitive-headers:
 ly:
   cors:

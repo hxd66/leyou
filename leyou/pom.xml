@@ -21,6 +21,8 @@
         <module>ly-auth</module>
         <module>ly-config</module>
         <module>ly-cart</module>
+        <module>ly-order</module>
+        <module>ly-job</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

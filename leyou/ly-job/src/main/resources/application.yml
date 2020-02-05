@@ -1,0 +1,11 @@
+server:
+  port: 9091
+spring:
+  application:
+    name: job-service
+  redis:
+    host: 127.0.0.1
+  task:
+    scheduling:
+      pool:
+        size: 10  #线程池大小视当前有几个任务

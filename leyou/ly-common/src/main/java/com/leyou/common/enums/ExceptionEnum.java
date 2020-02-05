@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ExceptionEnum {
     INVALID_PARAM_ERROR(400, "无效的请求参数！"),
+    PAY_ERROR(500,"支付流程出错"),
     INVALID_FILE_TYPE(400, "无效的文件类型！"),
     INVALID_PHONE_NUMBER(400, "无效的手机号码"),
     INVALID_VERIFY_CODE(400, "验证码错误！"),
